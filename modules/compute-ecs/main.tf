@@ -11,9 +11,9 @@ locals {
   )
 }
 
-# ---------------------------------------------------------
+
 # ECS Cluster
-# ---------------------------------------------------------
+
 
 resource "aws_ecs_cluster" "ecs_cluster" {
   name = "${local.project_name}-cluster"
@@ -26,9 +26,9 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   )
 }
 
-# ---------------------------------------------------------
+
 # CloudWatch Log Group
-# ---------------------------------------------------------
+
 
 resource "aws_cloudwatch_log_group" "ecs_logs" {
   name              = "/ecs/${local.project_name}"
@@ -37,9 +37,9 @@ resource "aws_cloudwatch_log_group" "ecs_logs" {
   tags = local.common_tags
 }
 
-# ---------------------------------------------------------
+
 # ECS Task Execution Role Trust Policy
-# ---------------------------------------------------------
+
 
 data "aws_iam_policy_document" "ecs_execution_assume_role" {
   statement {
@@ -59,9 +59,9 @@ data "aws_iam_policy_document" "ecs_execution_assume_role" {
   }
 }
 
-# ---------------------------------------------------------
+
 # ECS Task Execution Role
-# ---------------------------------------------------------
+
 
 resource "aws_iam_role" "ecs_execution_role" {
   name = "${local.project_name}-ecs-execution-role"
@@ -76,9 +76,9 @@ resource "aws_iam_role" "ecs_execution_role" {
   )
 }
 
-# ---------------------------------------------------------
+
 # Attach AWS ECS Execution Policy
-# ---------------------------------------------------------
+
 
 resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
   role = aws_iam_role.ecs_execution_role.name
@@ -86,9 +86,9 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# ---------------------------------------------------------
+
 # ECS Security Group
-# ---------------------------------------------------------
+
 
 resource "aws_security_group" "ecs_security_group" {
   name        = "${local.project_name}-ecs-sg"
@@ -103,9 +103,9 @@ resource "aws_security_group" "ecs_security_group" {
   )
 }
 
-# ---------------------------------------------------------
+
 # Allow ECS Outbound Traffic
-# ---------------------------------------------------------
+
 
 resource "aws_vpc_security_group_egress_rule" "ecs_outbound" {
   security_group_id = aws_security_group.ecs_security_group.id
@@ -116,9 +116,9 @@ resource "aws_vpc_security_group_egress_rule" "ecs_outbound" {
   description = "Allow ECS tasks outbound access"
 }
 
-# ---------------------------------------------------------
+
 # ECS Task Definition
-# ---------------------------------------------------------
+
 
 resource "aws_ecs_task_definition" "ecs_task" {
   family = "${local.project_name}-task"
@@ -164,15 +164,15 @@ resource "aws_ecs_task_definition" "ecs_task" {
   tags = local.common_tags
 }
 
-# ---------------------------------------------------------
+
 # Current AWS Region
-# ---------------------------------------------------------
+
 
 data "aws_region" "current" {}
 
-# ---------------------------------------------------------
+
 # ECS Service
-# ---------------------------------------------------------
+
 
 resource "aws_ecs_service" "ecs_service" {
   name    = "${local.project_name}-service"
