@@ -13,3 +13,10 @@ variable "environment" {
   description = "Environment name"
   type        = string
 }
+
+
+variable "database_password" {
+  description = "Master password for the dev PostgreSQL database"
+  type        = string
+  sensitive   = true
+}

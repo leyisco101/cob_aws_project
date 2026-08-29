@@ -67,3 +67,48 @@ output "s3_access_policy_arn" {
   value       = module.iam.s3_access_policy_arn
 }
 
+
+
+# ECS Outputs
+
+
+output "ecs_cluster_name" {
+  description = "Name of the dev ECS cluster"
+  value       = module.ecs.cluster_name
+}
+
+output "ecs_service_name" {
+  description = "Name of the dev ECS service"
+  value       = module.ecs.service_name
+}
+
+output "ecs_task_definition_arn" {
+  description = "ARN of the dev ECS task definition"
+  value       = module.ecs.task_definition_arn
+}
+
+output "ecs_security_group_id" {
+  description = "Security group ID used by the dev ECS service"
+  value       = module.ecs.ecs_security_group_id
+}
+
+
+output "database_endpoint" {
+  description = "Endpoint of the dev PostgreSQL database"
+  value       = module.database.database_endpoint
+}
+
+output "database_port" {
+  description = "Port used by the dev PostgreSQL database"
+  value       = module.database.database_port
+}
+
+output "database_name" {
+  description = "Name of the dev PostgreSQL database"
+  value       = module.database.database_name
+}
+
+output "database_security_group_id" {
+  description = "Security group ID used by the dev database"
+  value       = module.database.database_security_group_id
+}

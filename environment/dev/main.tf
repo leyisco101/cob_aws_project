@@ -13,6 +13,10 @@ provider "aws" {
   region = var.aws_region
 }
 
+# ---------------------------------------------------------
+# Network
+# ---------------------------------------------------------
+
 module "network" {
   source = "../../modules/network"
 
@@ -41,9 +45,9 @@ module "network" {
   }
 }
 
-
-# COB Storage Module
-
+# ---------------------------------------------------------
+# Storage
+# ---------------------------------------------------------
 
 module "storage" {
   source = "../../modules/storage"
@@ -62,7 +66,7 @@ module "storage" {
 }
 
 # ---------------------------------------------------------
-# COB IAM Module
+# IAM
 # ---------------------------------------------------------
 
 module "iam" {
@@ -72,6 +76,64 @@ module "iam" {
   environment = var.environment
 
   bucket_arn = module.storage.bucket_arn
+
+  tags = {
+    Owner = "Platform-Engineering"
+  }
+}
+
+# ---------------------------------------------------------
+# ECS
+# ---------------------------------------------------------
+
+module "ecs" {
+  source = "../../modules/compute-ecs"
+
+  project     = var.project
+  environment = var.environment
+
+  vpc_id = module.network.vpc_id
+
+  private_subnet_ids = module.network.private_subnet_ids
+
+  task_role_arn = module.iam.workload_role_arn
+
+  container_image = "nginx:latest"
+  container_port  = 80
+
+  cpu           = 256
+  memory        = 512
+  desired_count = 1
+
+  tags = {
+    Owner = "Platform-Engineering"
+  }
+}
+
+# ---------------------------------------------------------
+# Database
+# ---------------------------------------------------------
+
+module "database" {
+  source = "../../modules/database"
+
+  project     = var.project
+  environment = var.environment
+
+  vpc_id = module.network.vpc_id
+
+  private_subnet_ids = module.network.private_subnet_ids
+
+  allowed_security_group_id = module.ecs.ecs_security_group_id
+
+  database_name     = "appdb"
+  database_username = "cobadmin"
+  database_password = var.database_password
+
+  instance_class    = "db.t3.micro"
+  allocated_storage = 20
+
+  backup_retention_days = 1
 
   tags = {
     Owner = "Platform-Engineering"
