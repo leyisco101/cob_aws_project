@@ -81,21 +81,3 @@ The IAM module receives the S3 bucket ARN created by the storage module.
 The database module receives the ECS security group ID so that only ECS workloads can connect to PostgreSQL.
 This allows the modules to work together while still remaining reusable.
 
-Running the Project
-From the development environment, initialize Terraform:terraform init
-Format and validate the configuration:
-terraform fmt -recursive
-terraform validate
-Review the infrastructure changes:
-terraform plan
-After reviewing the plan: terraform apply
-
-Terraform plans should always be reviewed before applying changes, especially to check for unexpected resource changes or destruction.
-Current Progress
-
-The following capabilities have been completed:
-Network, S3 Storage, IAM, ECS/Fargate
-Development environment, Currently being completed:
-RDS PostgreSQL
-The remaining work includes:
-EC2 compute, AWS Glue Data Catalog, Amazon Athena, Production environment, Example consumer, 
