@@ -1,0 +1,101 @@
+COB - AWS Infrastructure Platform
+COB is an Infrastructure as Code project developed for Beejan Technologies Platform Engineering using Terraform and AWS.
+The purpose of COB is to provide reusable Terraform modules that make it easier for application teams to provision AWS infrastructure without building everything from scratch.
+The platform focuses on reusable infrastructure, secure defaults, consistent naming and tagging, network isolation, and least-privilege access.
+
+Technologies
+The project currently uses:
+Terraform
+AWS VPC
+Amazon S3
+AWS IAM
+Amazon ECS
+AWS Fargate
+Amazon CloudWatch
+Amazon RDS PostgreSQL
+
+The current development environment is deployed in the us-east-1 AWS region.
+Network
+The network module provides the networking foundation for the COB environment.
+
+It creates:
+A VPC, Two public subnets, Two private subnets, Internet Gateway, NAT Gateway, Public and private route tables,Security groups
+
+The VPC uses the 10.20.0.0/16 CIDR range and resources are distributed across two Availability Zones.
+Application workloads such as ECS and RDS use the private subnets. The NAT Gateway allows resources in those private subnets to make outbound connections without giving them public IP addresses.
+
+Object Storage
+The storage module provides secure object storage using Amazon S3.
+
+The module includes:
+Server-side encryption using AES-256, S3 versioning, Public access blocking, Lifecycle rules,Standard project and environment tags
+These settings provide a more secure and operationally useful S3 bucket than creating a basic bucket without additional controls.
+
+IAM
+
+The IAM module provides reusable permissions for workloads running through COB.
+A workload IAM role is created for the application running in ECS. The role currently provides access only to the S3 bucket created by the storage module.
+
+The permitted actions are:
+s3:ListBucket
+s3:GetObject
+s3:PutObject
+The policy is restricted to the required S3 bucket rather than providing access to every bucket in the AWS account.
+This follows the AWS principle of least privilege.
+ECS and Fargate
+The compute ECS module provides container-based compute using Amazon ECS and AWS Fargate.
+
+The module creates:
+ECS cluster, ECS task definition, ECS service, ECS security group, ECS task execution role
+CloudWatch log group
+The current development workload runs an Nginx container using one Fargate task.
+
+The ECS tasks are placed inside the private subnets and are not assigned public IP addresses.
+The application also receives the workload IAM role created by the IAM module, allowing applications running through ECS to securely access permitted AWS services such as S3.
+Container logs are sent to Amazon CloudWatch for monitoring and troubleshooting.
+
+Database
+The database module provides a relational database using Amazon RDS PostgreSQL.
+
+The development database is configured with:
+PostgreSQL, 20 GB GP3 storage, Storage encryption, Automated backups, Private subnet placement, Dedicated database security group, Public access disabled
+The database security group only allows PostgreSQL traffic on port 5432 from the ECS security group.
+This means the database is not directly exposed to the internet and only the application workload is permitted to connect to it.
+
+The development environment uses a smaller and simpler RDS configuration to reduce unnecessary cost. Production settings can later use stronger availability, backup, and deletion-protection settings.
+
+Security
+Security is included as part of the COB modules rather than being left entirely to individual application teams.
+Current security practices include:
+Private subnets for application workloads, Private RDS database, S3 public access blocking, S3 encryption at rest, RDS encryption at rest, Least-privilege IAM permissions
+Dedicated ECS and database security groups , Standard naming and tagging
+Sensitive Terraform files excluded from Git
+
+Database credentials are currently provided through Terraform variables and are not hardcoded directly into the modules.
+Files containing credentials, Terraform state, or other sensitive information should never be committed to GitHub.
+Reusable Module Design
+COB separates reusable infrastructure modules from environment-specific configuration.
+The development environment combines the different modules and passes outputs from one module into another.
+For example, the ECS module receives the private subnet IDs created by the network module.
+The IAM module receives the S3 bucket ARN created by the storage module.
+The database module receives the ECS security group ID so that only ECS workloads can connect to PostgreSQL.
+This allows the modules to work together while still remaining reusable.
+
+Running the Project
+From the development environment, initialize Terraform:terraform init
+Format and validate the configuration:
+terraform fmt -recursive
+terraform validate
+Review the infrastructure changes:
+terraform plan
+After reviewing the plan: terraform apply
+
+Terraform plans should always be reviewed before applying changes, especially to check for unexpected resource changes or destruction.
+Current Progress
+
+The following capabilities have been completed:
+Network, S3 Storage, IAM, ECS/Fargate
+Development environment, Currently being completed:
+RDS PostgreSQL
+The remaining work includes:
+EC2 compute, AWS Glue Data Catalog, Amazon Athena, Production environment, Example consumer, 
