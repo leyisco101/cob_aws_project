@@ -1,0 +1,28 @@
+# Terraform working directories
+**/.terraform/*
+
+# Terraform state files - DO NOT upload these
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Terraform plan files
+*.tfplan
+
+# Terraform variable files
+*.tfvars
+*.tfvars.json
+
+# State backups
+terraform-state-backup.json
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
