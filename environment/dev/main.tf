@@ -139,3 +139,38 @@ module "database" {
     Owner = "Platform-Engineering"
   }
 }
+
+module "ec2" {
+  source = "../../modules/compute-ec2"
+
+  project     = var.project
+  environment = var.environment
+
+  vpc_id = module.network.vpc_id
+
+  private_subnet_ids = module.network.private_subnet_ids
+
+  instance_type    = "t3.micro"
+  root_volume_size = 8
+
+  tags = {
+    Owner = "Platform-Engineering"
+  }
+}
+
+
+module "data_platform" {
+  source = "../../modules/data-platform"
+
+  project     = var.project
+  environment = var.environment
+
+  data_bucket_name = module.storage.bucket_name
+  data_prefix      = var.data_prefix
+
+  athena_results_expiration_days = var.athena_results_expiration_days
+
+  tags = {
+    Owner = "Platform-Engineering"
+  }
+}

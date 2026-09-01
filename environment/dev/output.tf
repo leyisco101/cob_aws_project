@@ -111,4 +111,46 @@ output "database_name" {
 output "database_security_group_id" {
   description = "Security group ID used by the dev database"
   value       = module.database.database_security_group_id
+
+}
+
+output "ec2_instance_id" {
+  description = "ID of the dev EC2 instance"
+  value       = module.ec2.instance_id
+}
+
+output "ec2_private_ip" {
+  description = "Private IP address of the dev EC2 instance"
+  value       = module.ec2.private_ip
+}
+
+output "ec2_security_group_id" {
+  description = "Security group ID used by the dev EC2 instance"
+  value       = module.ec2.security_group_id
+}
+
+output "ec2_iam_role_arn" {
+  description = "IAM role ARN used by the dev EC2 instance"
+  value       = module.ec2.iam_role_arn
+}
+
+
+output "glue_database_name" {
+  description = "Name of the dev Glue database"
+  value       = module.data_platform.glue_database_name
+}
+
+output "glue_table_name" {
+  description = "Name of the dev Glue table"
+  value       = module.data_platform.glue_table_name
+}
+
+output "athena_workgroup_name" {
+  description = "Name of the dev Athena workgroup"
+  value       = module.data_platform.athena_workgroup_name
+}
+
+output "athena_results_bucket_name" {
+  description = "Name of the dev Athena results bucket"
+  value       = module.data_platform.athena_results_bucket_name
 }
